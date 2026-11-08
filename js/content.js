@@ -595,7 +595,29 @@
       return typeName + ": " + ui.truncate(main || "", 60);
     }
 
-    /** Short slug source for file names (used by export later). */
+    /** Text used to build the default file name. Never includes passwords. */
+    function getNameHint() {
+      if (QUICK_TYPES.indexOf(state.type) !== -1) {
+        const value = state.quick.value.trim();
+        if (state.type === "link" && quickKind() === "link") {
+          // Host without "www.": "https://www.example.com/a" -> "example.com".
+          const match = /^(?:[a-z][a-z0-9+.-]*:\/\/)?([^/?#:]+)/i.exec(value);
+          return match ? match[1].replace(/^www\./i, "") : value;
+        }
+        if (state.type === "link" && quickKind() === "email") return value.replace(/^mailto:/i, "").split("@")[0];
+        if (state.type === "link" && quickKind() === "phone") return "phone";
+        return value.split(/\s+/).slice(0, 4).join(" ");
+      }
+      const f = state.fields[state.type] || {};
+      switch (state.type) {
+        case "wifi": return "wifi " + (f.ssid || "");
+        case "contact": return f.name || "contact";
+        case "email": return "email " + String(f.to || "").split("@")[0];
+        case "event": return f.title || "event";
+        default: return state.type;
+      }
+    }
+
     function getType() {
       return state.type;
     }
@@ -607,7 +629,7 @@
     renderPicker();
     renderPanels();
 
-    return { getResult, getSummary, getType };
+    return { getResult, getSummary, getNameHint, getType };
   }
 
   return { create, PRIMARY_TYPES, MORE_TYPES, FORMS };

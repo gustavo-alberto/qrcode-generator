@@ -194,8 +194,46 @@
           <span class="block-index">03</span>
           <span data-i18n="exportTitle">Export</span>
         </h2>
-        <div class="block-body placeholder" id="export-body">
-          <p data-i18n="comingSoon">Coming in a later stage.</p>
+        <div class="block-body" id="export-body">
+          <!-- Moved into the bottom sheet on mobile; one set of controls. -->
+          <div class="export-panel" id="export-panel">
+            <div class="control">
+              <p class="field-label" id="format-label" data-i18n="format">Format</p>
+              <div class="segmented" id="format-group" role="radiogroup" aria-labelledby="format-label"></div>
+            </div>
+
+            <div class="control" id="size-row">
+              <p class="field-label" id="size-label" data-i18n="sizePx">Size (px)</p>
+              <div class="segmented" id="size-group" role="radiogroup" aria-labelledby="size-label" aria-describedby="size-note"></div>
+              <p class="field-hint" id="size-note" data-i18n="svgSizeNote" hidden>Vector: sharp at any size.</p>
+            </div>
+
+            <div id="pdf-rows" hidden>
+              <div class="control">
+                <p class="field-label" id="pdf-size-label" data-i18n="pdfSize">QR size on the page</p>
+                <div class="segmented" id="pdf-size-group" role="radiogroup" aria-labelledby="pdf-size-label"></div>
+              </div>
+              <div class="control">
+                <p class="field-label" id="pdf-page-label" data-i18n="pdfPage">Page</p>
+                <div class="segmented" id="pdf-page-group" role="radiogroup" aria-labelledby="pdf-page-label"></div>
+              </div>
+            </div>
+
+            <div class="control">
+              <label class="field-label" for="file-name" data-i18n="fileName">File name</label>
+              <div class="file-name">
+                <input type="text" class="field mono" id="file-name" spellcheck="false" autocomplete="off" autocapitalize="off">
+                <span class="file-ext mono" id="file-ext">.png</span>
+              </div>
+            </div>
+
+            <div class="export-actions">
+              <button type="button" class="btn btn-primary" id="download-btn" disabled>Download</button>
+              <button type="button" class="btn btn-secondary" id="copy-btn" disabled data-i18n="copy">Copy</button>
+            </div>
+            <p class="field-hint" id="export-reason" hidden></p>
+            <p class="visually-hidden" id="export-live" aria-live="polite"></p>
+          </div>
         </div>
       </section>
     </aside>
@@ -209,9 +247,27 @@
 
   <!-- Mobile-only action bar, inside the thumb zone. -->
   <div class="action-bar" id="action-bar">
-    <button type="button" class="btn btn-primary" disabled data-i18n="download">Download</button>
-    <button type="button" class="btn btn-secondary" disabled data-i18n="copy">Copy</button>
+    <div class="split">
+      <button type="button" class="btn btn-primary split-main" id="bar-download" disabled>Download</button>
+      <button type="button" class="btn btn-primary split-toggle" id="bar-options" aria-haspopup="dialog" aria-controls="export-sheet" data-i18n-attr="aria-label:exportOptions;title:exportOptions">
+        <svg class="chevron" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 7.5l3-3 3 3" /></svg>
+      </button>
+    </div>
+    <button type="button" class="btn btn-secondary" id="bar-copy" disabled data-i18n="copy">Copy</button>
   </div>
+
+  <dialog class="sheet" id="export-sheet" aria-labelledby="sheet-title">
+    <div class="sheet-header">
+      <h2 class="block-title" id="sheet-title">
+        <span class="block-index">03</span>
+        <span data-i18n="exportTitle">Export</span>
+      </h2>
+      <button type="button" class="icon-btn" id="sheet-close" data-i18n-attr="aria-label:close;title:close">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+      </button>
+    </div>
+    <div class="sheet-body" id="export-sheet-body"></div>
+  </dialog>
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden>
     <span class="toast-text"></span>
@@ -230,6 +286,7 @@
   <script src="js/validate.js"></script>
   <script src="js/render.js"></script>
   <script src="js/appearance.js"></script>
+  <script src="js/export.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

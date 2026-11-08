@@ -943,6 +943,120 @@ button {
   background: repeating-conic-gradient(#e6e6e6 0 25%, #ffffff 0 50%) 0 0 / 16px 16px;
 }
 
+/* ---------- Export ---------- */
+
+.export-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.file-name {
+  display: flex;
+  align-items: stretch;
+}
+
+.file-name .field {
+  min-width: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  font-size: 14px;
+}
+
+.file-ext {
+  display: grid;
+  place-items: center;
+  padding: 0 12px;
+  border: 1px solid var(--line-strong);
+  border-left: 0;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.export-actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+
+.export-actions .btn {
+  min-height: 48px;
+}
+
+.btn.is-done {
+  border-color: var(--ok);
+  color: var(--ok);
+}
+
+.split {
+  display: flex;
+  min-width: 0;
+}
+
+.split-main {
+  flex: 1;
+  min-width: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.split-toggle {
+  flex: none;
+  width: 48px;
+  padding: 0;
+  border-left: 1px solid color-mix(in srgb, var(--accent-ink) 35%, transparent);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* ---------- Bottom sheet (mobile export) ---------- */
+
+.sheet {
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  margin: auto auto 0;
+  padding: 0;
+  border: 0;
+  border-radius: 16px 16px 0 0;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+
+.sheet::backdrop {
+  background: rgba(10, 10, 12, 0.5);
+}
+
+.sheet[open] {
+  animation: sheet-in 180ms var(--ease);
+}
+
+@keyframes sheet-in {
+  from { transform: translateY(24px); opacity: 0.6; }
+  to { transform: none; opacity: 1; }
+}
+
+.sheet-header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 8px 4px 16px;
+  background: var(--surface);
+}
+
+.sheet-header .block-title {
+  margin: 0;
+}
+
+.sheet-body {
+  padding: 8px 16px calc(20px + env(safe-area-inset-bottom));
+}
+
 /* ---------- Toast ---------- */
 
 .toast {

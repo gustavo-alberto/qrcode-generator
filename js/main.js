@@ -2,7 +2,7 @@
  * App bootstrap: theme and language toggles, content input and live preview.
  */
 (function () {
-  const { state, i18n, ui, render, content, payloads, detect, presets, appearance, validate } = window.QRApp;
+  const { state, i18n, ui, render, content, payloads, detect, presets, appearance, validate, exporter } = window.QRApp;
 
   const PREVIEW_DEBOUNCE_MS = 150;
   const SAVE_DEBOUNCE_MS = 300;
@@ -79,6 +79,7 @@
 
   const statusAction = document.getElementById("status-action");
   let statusActionHandler = null;
+  let exportPanel = null; // created after the appearance block
 
   statusAction.addEventListener("click", function () {
     if (statusActionHandler) statusActionHandler();
@@ -138,6 +139,8 @@
         ? i18n.t("previewLabel", { text: contentBlock.getSummary() })
         : i18n.t("emptyPreviewLabel")
     );
+
+    if (exportPanel) exportPanel.refresh();
   }
 
   function updatePreview() {
@@ -175,6 +178,27 @@
         app.appearance = next;
         saveAppearance();
         updatePreviewDebounced();
+      }
+    }
+  );
+
+  // ---------- Export ----------
+
+  exportPanel = exporter.createPanel(
+    { i18n: i18n, ui: ui, render: render, QRCodeStyling: window.QRCodeStyling, jsPDF: window.jspdf.jsPDF },
+    {
+      prefs: prefs.export,
+      // Export only what the preview shows as ready (warnings included).
+      getExportable: function () {
+        if (lastStatus !== "ready" || !app.content.payload) return null;
+        return {
+          payload: app.content.payload,
+          appearance: Object.assign({}, app.appearance),
+          nameHint: contentBlock.getNameHint()
+        };
+      },
+      onPrefsChange: function (next) {
+        state.savePrefs({ export: next });
       }
     }
   );
