@@ -2,10 +2,12 @@
  * App bootstrap: theme and language toggles, content input and live preview.
  */
 (function () {
-  const { state, i18n, ui, render, content, payloads, detect } = window.QRApp;
+  const { state, i18n, ui, render, content, payloads, detect, presets, appearance } = window.QRApp;
 
   const PREVIEW_DEBOUNCE_MS = 150;
-  const app = state.createAppState();
+  const SAVE_DEBOUNCE_MS = 300;
+  const prefs = state.loadPrefs();
+  const app = state.createAppState(presets.sanitizeAppearance(prefs.appearance));
 
   const root = document.documentElement;
   const themeToggle = document.getElementById("theme-toggle");
@@ -105,9 +107,29 @@
       lastStatus = result.status; // "empty" | "incomplete"
     }
     renderStatus();
+    appearanceBlock.refreshThumbnails(result.status === "ok" ? result.payload : "");
   }
 
   const updatePreviewDebounced = ui.debounce(updatePreview, PREVIEW_DEBOUNCE_MS);
+
+  // ---------- Appearance ----------
+
+  const saveAppearance = ui.debounce(function () {
+    state.savePrefs({ appearance: app.appearance });
+  }, SAVE_DEBOUNCE_MS);
+
+  const appearanceBlock = appearance.create(
+    document.getElementById("appearance-body"),
+    { i18n: i18n, ui: ui, presets: presets, render: render, QRCodeStyling: window.QRCodeStyling },
+    {
+      appearance: app.appearance,
+      onChange: function (next) {
+        app.appearance = next;
+        saveAppearance();
+        updatePreviewDebounced();
+      }
+    }
+  );
 
   langToggle.addEventListener("click", function () {
     const next = i18n.getLang() === "pt" ? "en" : "pt";
@@ -118,7 +140,6 @@
 
   // ---------- Init ----------
 
-  const prefs = state.loadPrefs();
   i18n.setLang(i18n.resolveLang(prefs.lang, navigator.language));
   renderLanguage();
 })();

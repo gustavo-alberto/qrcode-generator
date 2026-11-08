@@ -94,8 +94,73 @@
           <span class="block-index">02</span>
           <span data-i18n="appearanceTitle">Appearance</span>
         </h2>
-        <div class="block-body placeholder" id="appearance-body">
-          <p data-i18n="comingSoon">Coming in a later stage.</p>
+        <div class="block-body" id="appearance-body">
+          <div class="presets" id="presets" role="radiogroup" data-i18n-attr="aria-label:presetsLabel"></div>
+
+          <details class="disclosure" id="customize">
+            <summary data-i18n="customize">Customize</summary>
+            <div class="disclosure-body">
+              <div class="control">
+                <p class="field-label" id="dots-label" data-i18n="dotsStyle">Module style</p>
+                <div class="segmented wrap" id="dots-group" role="radiogroup" aria-labelledby="dots-label"></div>
+              </div>
+
+              <div class="control">
+                <p class="field-label" id="corners-label" data-i18n="cornersStyle">Corners</p>
+                <div class="segmented" id="corners-group" role="radiogroup" aria-labelledby="corners-label"></div>
+              </div>
+
+              <div class="control">
+                <p class="field-label" data-i18n="colors">Colors</p>
+                <div class="colors">
+                  <div class="color-field">
+                    <label class="color-label" for="fg-hex" data-i18n="foreground">Foreground</label>
+                    <div class="color-input">
+                      <input type="color" id="fg-picker" value="#000000" data-i18n-attr="aria-label:foregroundPicker">
+                      <input type="text" class="field mono" id="fg-hex" maxlength="7" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="fg-error">
+                    </div>
+                    <p class="field-error" id="fg-error" hidden></p>
+                  </div>
+                  <button type="button" class="icon-btn swap-btn" id="swap-colors" data-i18n-attr="aria-label:swapColors;title:swapColors">
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l-4 4 4 4M3 8h14M17 20l4-4-4-4M21 16H7" /></svg>
+                  </button>
+                  <div class="color-field">
+                    <label class="color-label" for="bg-hex" data-i18n="background">Background</label>
+                    <div class="color-input">
+                      <input type="color" id="bg-picker" value="#ffffff" data-i18n-attr="aria-label:backgroundPicker">
+                      <input type="text" class="field mono" id="bg-hex" maxlength="7" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="bg-error">
+                    </div>
+                    <p class="field-error" id="bg-error" hidden></p>
+                  </div>
+                </div>
+                <label class="check-label">
+                  <input type="checkbox" class="checkbox" id="bg-transparent" aria-describedby="transparent-hint">
+                  <span data-i18n="transparentBg">Transparent background</span>
+                </label>
+                <p class="field-hint" id="transparent-hint" data-i18n="transparentHint">PNG, SVG and PDF only. JPG always has a solid background.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="disclosure" id="advanced">
+            <summary data-i18n="advanced">Advanced</summary>
+            <div class="disclosure-body">
+              <div class="control">
+                <p class="field-label" id="ecc-label" data-i18n="errorCorrection">Error correction</p>
+                <div class="segmented" id="ecc-group" role="radiogroup" aria-labelledby="ecc-label" aria-describedby="ecc-hint"></div>
+                <p class="field-hint" id="ecc-hint" data-i18n="eccHint">Higher levels still scan when part of the code is damaged or covered, but hold less content.</p>
+              </div>
+              <div class="control">
+                <p class="field-label" id="margin-label" data-i18n="margin">Margin (modules)</p>
+                <div class="segmented" id="margin-group" role="radiogroup" aria-labelledby="margin-label" aria-describedby="margin-hint"></div>
+                <p class="field-hint" id="margin-hint" data-i18n="marginHint">Blank border around the code. Readers need some space to find it.</p>
+              </div>
+            </div>
+          </details>
+
+          <div class="block-footer">
+            <button type="button" class="link-btn" id="reset-btn" data-i18n="reset">Reset</button>
+          </div>
         </div>
       </section>
     </div>
@@ -147,6 +212,11 @@
     <button type="button" class="btn btn-secondary" disabled data-i18n="copy">Copy</button>
   </div>
 
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden>
+    <span class="toast-text"></span>
+    <button type="button" class="toast-action"></button>
+  </div>
+
   <script src="vendor/qr-code-styling.js"></script>
   <script src="vendor/jspdf.umd.min.js"></script>
   <script src="js/state.js"></script>
@@ -155,7 +225,9 @@
   <script src="js/payloads.js"></script>
   <script src="js/detect.js"></script>
   <script src="js/content.js"></script>
+  <script src="js/presets.js"></script>
   <script src="js/render.js"></script>
+  <script src="js/appearance.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

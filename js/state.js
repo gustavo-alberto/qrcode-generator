@@ -12,21 +12,14 @@
 })(typeof self !== "undefined" ? self : this, function () {
   const STORAGE_KEY = "qrgen:v1";
 
-  /** Default appearance. Mirrors the "classic" preset. */
-  const DEFAULT_APPEARANCE = Object.freeze({
-    dotsType: "square",
-    cornersSquareType: "square",
-    cornersDotType: "square",
-    foreground: "#000000",
-    background: "#ffffff",
-    errorCorrection: "M"
-  });
-
-  /** Creates the in-memory app state. Content is session-only. */
-  function createAppState() {
+  /**
+   * Creates the in-memory app state. Content is session-only;
+   * `appearance` is filled at startup from sanitized preferences.
+   */
+  function createAppState(appearance) {
     return {
       content: { payload: "" },
-      appearance: Object.assign({}, DEFAULT_APPEARANCE)
+      appearance: appearance
     };
   }
 
@@ -62,5 +55,5 @@
     return next;
   }
 
-  return { STORAGE_KEY, DEFAULT_APPEARANCE, createAppState, loadPrefs, savePrefs };
+  return { STORAGE_KEY, createAppState, loadPrefs, savePrefs };
 });
