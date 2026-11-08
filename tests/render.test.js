@@ -36,6 +36,21 @@ test("transparent background clears the background color", () => {
   assert.deepEqual(o.backgroundOptions, { color: "" });
 });
 
+test("logoImageSize maps named sizes to the library cover coefficient", () => {
+  assert.equal(r.logoImageSize("small"), 0.2);
+  assert.equal(r.logoImageSize("large"), 0.4);
+  assert.equal(r.logoImageSize("huge"), 0.3);
+  assert.ok(Object.values(r.LOGO_SIZES).every((v) => v <= 0.5));
+});
+
+test("logo adds image options; no logo adds none", () => {
+  const withLogo = r.buildQrOptions("hi", Object.assign({}, base, { logo: "data:image/png;base64,AA", logoSize: "large", errorCorrection: "H" }), 1000);
+  assert.equal(withLogo.image, "data:image/png;base64,AA");
+  assert.deepEqual(withLogo.imageOptions, { hideBackgroundDots: true, imageSize: 0.4, margin: 10, saveAsBlob: true });
+  const plain = r.buildQrOptions("hi", base, 1000);
+  assert.equal("image" in plain, false);
+});
+
 test("unknown corner style falls back to square", () => {
   const o = r.buildQrOptions("hi", Object.assign({}, base, { cornerStyle: "x" }), 100);
   assert.equal(o.cornersSquareOptions.type, "square");

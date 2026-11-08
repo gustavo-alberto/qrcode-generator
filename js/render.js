@@ -28,10 +28,34 @@
     return Math.round((size * modules) / (moduleCount + 2 * modules));
   }
 
+  /**
+   * Logo sizes as qr-code-styling's imageSize: the fraction of the
+   * error-correction capacity the logo may cover (the library rounds the
+   * area to an odd number of modules, so exact percentages would mislead).
+   * Being relative to the level, lower levels shrink the logo instead of
+   * breaking the code. The library advises staying at or below 0.5.
+   */
+  const LOGO_SIZES = { small: 0.2, medium: 0.3, large: 0.4 };
+
+  function logoImageSize(size) {
+    return LOGO_SIZES[size] || LOGO_SIZES.medium;
+  }
+
   /** Maps app state to qr-code-styling options. Pure, no DOM access. */
   function buildQrOptions(data, appearance, size, margin, type) {
     const corners = CORNER_STYLES[appearance.cornerStyle] || CORNER_STYLES.square;
-    return {
+    const logo = appearance.logo
+      ? {
+          image: appearance.logo,
+          imageOptions: {
+            hideBackgroundDots: true,
+            imageSize: logoImageSize(appearance.logoSize),
+            margin: Math.round(size * 0.01),
+            saveAsBlob: true // embed the logo inside exported SVGs
+          }
+        }
+      : {};
+    return Object.assign({
       type: type || "svg",
       width: size,
       height: size,
@@ -43,7 +67,7 @@
       cornersDotOptions: { type: corners.dot, color: appearance.foreground },
       // An empty color makes the library skip the background rect.
       backgroundOptions: { color: appearance.transparent ? "" : appearance.background }
-    };
+    }, logo);
   }
 
   /**
@@ -102,5 +126,5 @@
     };
   }
 
-  return { PREVIEW_SIZE, marginPx, buildQrOptions, createQr, isOverflowError, createPreview };
+  return { PREVIEW_SIZE, LOGO_SIZES, marginPx, logoImageSize, buildQrOptions, createQr, isOverflowError, createPreview };
 });

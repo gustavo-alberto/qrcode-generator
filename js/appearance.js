@@ -10,6 +10,29 @@
 })(typeof self !== "undefined" ? self : this, function () {
   const THUMB_SIZE = 64;
   const SAMPLE_DATA = "https://example.com";
+  const LOGO_MAX_BYTES = 2 * 1024 * 1024;
+  const LOGO_TYPES = ["image/png", "image/jpeg", "image/svg+xml"];
+  const LOGO_SIZES = ["small", "medium", "large"];
+  const LOGO_SIZE_LABELS = { small: "logoSmall", medium: "logoMedium", large: "logoLarge" };
+  const LOGO_DEFAULT_SIZE = "medium";
+
+  /** Reads and checks a logo file. Resolves to a data URL; rejects with an i18n key. */
+  function readLogoFile(file) {
+    return new Promise(function (resolve, reject) {
+      if (LOGO_TYPES.indexOf(file.type) === -1) return reject("errLogoType");
+      if (file.size > LOGO_MAX_BYTES) return reject("errLogoSize");
+      const reader = new FileReader();
+      reader.onerror = function () { reject("errLogoRead"); };
+      reader.onload = function () {
+        // Make sure the browser can actually decode it.
+        const img = new Image();
+        img.onload = function () { resolve(reader.result); };
+        img.onerror = function () { reject("errLogoRead"); };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
 
   const DOT_LABELS = {
     square: "dotSquare",
@@ -28,7 +51,7 @@
 
   /**
    * deps: { i18n, ui, presets, render, QRCodeStyling }
-   * options: { appearance, onChange(appearance) }
+   * options: { appearance, onChange(appearance), onLogoChange({ src, size } | null) }
    */
   function create(rootEl, deps, options) {
     const { i18n, ui, presets, render, QRCodeStyling } = deps;
@@ -201,11 +224,99 @@
       { value: appearance.margin, onChange: function (v) { update({ margin: Number(v) }); } }
     );
 
+    // ---------- Logo ----------
+    // The logo lives only in memory (never persisted: it can be large).
+
+    let logo = null; // { src, name, size }
+    let eccBeforeLogo = null;
+
+    const logoInput = rootEl.querySelector("#logo-input");
+    const logoEmpty = rootEl.querySelector("#logo-empty");
+    const logoFilled = rootEl.querySelector("#logo-filled");
+    const logoThumb = rootEl.querySelector("#logo-thumb");
+    const logoName = rootEl.querySelector("#logo-name");
+    const logoRemove = rootEl.querySelector("#logo-remove");
+    const logoSizeRow = rootEl.querySelector("#logo-size-row");
+    const logoError = rootEl.querySelector("#logo-error");
+
+    const logoSizeGroup = ui.createRadioGroup(
+      rootEl.querySelector("#logo-size-group"),
+      LOGO_SIZES.map(function (size) {
+        return { value: size, build: textButton(LOGO_SIZE_LABELS[size]) };
+      }),
+      {
+        value: LOGO_DEFAULT_SIZE,
+        onChange: function (size) {
+          if (!logo) return;
+          logo.size = size;
+          emitLogo();
+        }
+      }
+    );
+
+    function showLogoError(key) {
+      logoError.hidden = !key;
+      if (key) setText(logoError, key);
+    }
+
+    function renderLogo() {
+      logoEmpty.hidden = Boolean(logo);
+      logoFilled.hidden = !logo;
+      logoSizeRow.hidden = !logo;
+      if (logo) {
+        logoThumb.src = logo.src;
+        logoName.textContent = logo.name;
+        logoName.title = logo.name;
+        logoSizeGroup.setValue(logo.size);
+      } else {
+        logoThumb.removeAttribute("src");
+      }
+    }
+
+    function emitLogo() {
+      options.onLogoChange(logo ? { src: logo.src, size: logo.size } : null);
+    }
+
+    logoInput.addEventListener("change", function () {
+      const file = logoInput.files && logoInput.files[0];
+      logoInput.value = ""; // allow picking the same file again
+      if (!file) return;
+      readLogoFile(file).then(
+        function (src) {
+          showLogoError(null);
+          logo = { src: src, name: file.name, size: logo ? logo.size : LOGO_DEFAULT_SIZE };
+          renderLogo();
+          emitLogo();
+          // A logo hides modules: use the highest error correction.
+          if (appearance.errorCorrection !== "H") {
+            eccBeforeLogo = appearance.errorCorrection;
+            update({ errorCorrection: "H" });
+            ui.showToast({ message: i18n.t("logoEccRaised") });
+          }
+          logoRemove.focus();
+        },
+        function (key) {
+          showLogoError(typeof key === "string" ? key : "errLogoRead");
+        }
+      );
+    });
+
+    logoRemove.addEventListener("click", function () {
+      logo = null;
+      renderLogo();
+      emitLogo();
+      // Restore the previous level unless the user changed it meanwhile.
+      if (eccBeforeLogo && appearance.errorCorrection === "H") update({ errorCorrection: eccBeforeLogo });
+      eccBeforeLogo = null;
+      logoInput.focus();
+    });
+
     // ---------- Reset ----------
 
     resetBtn.addEventListener("click", function () {
       const previous = Object.assign({}, appearance);
-      update(Object.assign({}, presets.DEFAULT_APPEARANCE));
+      // Reset style, but keep max error correction while a logo is present.
+      update(Object.assign({}, presets.DEFAULT_APPEARANCE, logo ? { errorCorrection: "H" } : {}));
       ui.showToast({
         message: i18n.t("resetDone"),
         actionLabel: i18n.t("undo"),
@@ -285,6 +396,7 @@
     }
 
     syncControls();
+    renderLogo();
     refreshThumbnails(SAMPLE_DATA);
 
     return {

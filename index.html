@@ -139,6 +139,28 @@
                 </label>
                 <p class="field-hint" id="transparent-hint" data-i18n="transparentHint">PNG, SVG and PDF only. JPG always has a solid background.</p>
               </div>
+
+              <div class="control">
+                <p class="field-label" id="logo-label" data-i18n="logo">Logo</p>
+                <div id="logo-empty">
+                  <input type="file" id="logo-input" class="visually-hidden file-input" accept="image/png,image/jpeg,image/svg+xml" aria-labelledby="logo-label logo-add-text" aria-describedby="logo-hint logo-error">
+                  <label for="logo-input" class="btn btn-secondary file-btn">
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+                    <span id="logo-add-text" data-i18n="addLogo">Add logo</span>
+                  </label>
+                </div>
+                <div class="logo-filled" id="logo-filled" hidden>
+                  <img class="logo-thumb" id="logo-thumb" alt="">
+                  <span class="logo-name mono" id="logo-name"></span>
+                  <button type="button" class="link-btn" id="logo-remove" data-i18n="removeLogo">Remove</button>
+                </div>
+                <div class="logo-size" id="logo-size-row" hidden>
+                  <p class="color-label" id="logo-size-label" data-i18n="logoSize">Logo size</p>
+                  <div class="segmented" id="logo-size-group" role="radiogroup" aria-labelledby="logo-size-label"></div>
+                </div>
+                <p class="field-hint" id="logo-hint" data-i18n="logoHint">PNG, JPG or SVG, up to 2 MB.</p>
+                <p class="field-error" id="logo-error" hidden></p>
+              </div>
             </div>
           </details>
 

@@ -8,6 +8,12 @@
   const SAVE_DEBOUNCE_MS = 300;
   const prefs = state.loadPrefs();
   const app = state.createAppState(presets.sanitizeAppearance(prefs.appearance));
+  app.logo = null; // { src, size } — session only, never persisted
+
+  /** Appearance plus the logo, as the renderer and exporter expect it. */
+  function renderLook() {
+    return Object.assign({}, app.appearance, app.logo ? { logo: app.logo.src, logoSize: app.logo.size } : {});
+  }
 
   const root = document.documentElement;
   const themeToggle = document.getElementById("theme-toggle");
@@ -121,6 +127,13 @@
             );
           }
         };
+      } else if (app.logo && app.appearance.errorCorrection !== "H") {
+        status = "warning";
+        text = i18n.t("warnLogoEcc");
+        action = {
+          label: i18n.t("actionUseMax"),
+          run: function () { appearanceBlock.apply({ errorCorrection: "H" }); }
+        };
       }
     }
 
@@ -150,7 +163,7 @@
     if (result.status === "invalid") {
       lastStatus = "invalid";
     } else if (result.status === "ok") {
-      const rendered = preview.render(result.payload, app.appearance);
+      const rendered = preview.render(result.payload, renderLook());
       if (rendered.status === "error") console.error(rendered.error);
       lastStatus = rendered.status;
     } else {
@@ -178,6 +191,10 @@
         app.appearance = next;
         saveAppearance();
         updatePreviewDebounced();
+      },
+      onLogoChange: function (logo) {
+        app.logo = logo;
+        updatePreviewDebounced();
       }
     }
   );
@@ -193,7 +210,7 @@
         if (lastStatus !== "ready" || !app.content.payload) return null;
         return {
           payload: app.content.payload,
-          appearance: Object.assign({}, app.appearance),
+          appearance: renderLook(),
           nameHint: contentBlock.getNameHint()
         };
       },

@@ -943,6 +943,49 @@ button {
   background: repeating-conic-gradient(#e6e6e6 0 25%, #ffffff 0 50%) 0 0 / 16px 16px;
 }
 
+/* ---------- Logo ---------- */
+
+.file-btn {
+  min-height: var(--target);
+}
+
+/* The real file input is visually hidden; show its focus on the label. */
+.file-input:focus-visible + .file-btn {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.logo-filled {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--target);
+}
+
+.logo-thumb {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 4px;
+  object-fit: contain;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+
+.logo-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.logo-size {
+  margin-top: 12px;
+}
+
 /* ---------- Export ---------- */
 
 .export-panel {
