@@ -25,7 +25,7 @@
   /** Creates the in-memory app state. Content is session-only. */
   function createAppState() {
     return {
-      content: { text: "" },
+      content: { payload: "" },
       appearance: Object.assign({}, DEFAULT_APPEARANCE)
     };
   }

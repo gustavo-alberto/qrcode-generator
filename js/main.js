@@ -2,7 +2,7 @@
  * App bootstrap: theme and language toggles, content input and live preview.
  */
 (function () {
-  const { state, i18n, ui, render } = window.QRApp;
+  const { state, i18n, ui, render, content, payloads, detect } = window.QRApp;
 
   const PREVIEW_DEBOUNCE_MS = 150;
   const app = state.createAppState();
@@ -51,7 +51,6 @@
 
   // ---------- Preview ----------
 
-  const contentInput = document.getElementById("content-input");
   const qrCanvas = document.getElementById("qr-canvas");
   const statusEl = document.getElementById("status");
   const statusText = document.getElementById("status-text");
@@ -59,12 +58,22 @@
 
   let lastStatus = "empty";
 
+  // Status shown under the preview. "invalid" keeps the last valid QR (dimmed);
+  // "empty" and "incomplete" clear it so it never shows outdated content.
   const STATUS_KEYS = {
     empty: "statusEmpty",
+    incomplete: "statusIncomplete",
+    invalid: "statusInvalid",
     ready: "statusReady",
     overflow: "statusOverflow",
     error: "statusError"
   };
+
+  const contentBlock = content.create(
+    document.getElementById("content-body"),
+    { i18n: i18n, ui: ui, payloads: payloads, detect: detect },
+    { onChange: function () { updatePreviewDebounced(); } }
+  );
 
   function renderStatus() {
     statusEl.setAttribute("data-status", lastStatus);
@@ -76,25 +85,29 @@
     qrCanvas.setAttribute(
       "aria-label",
       lastStatus === "ready"
-        ? i18n.t("previewLabel", { text: ui.truncate(app.content.text, 80) })
+        ? i18n.t("previewLabel", { text: contentBlock.getSummary() })
         : i18n.t("emptyPreviewLabel")
     );
   }
 
   function updatePreview() {
-    const result = preview.render(app.content.text, app.appearance);
-    if (result.status === "error") console.error(result.error);
-    lastStatus = result.status;
+    const result = contentBlock.getResult();
+    app.content.payload = result.payload;
+
+    if (result.status === "invalid") {
+      lastStatus = "invalid";
+    } else if (result.status === "ok") {
+      const rendered = preview.render(result.payload, app.appearance);
+      if (rendered.status === "error") console.error(rendered.error);
+      lastStatus = rendered.status;
+    } else {
+      preview.render("", app.appearance);
+      lastStatus = result.status; // "empty" | "incomplete"
+    }
     renderStatus();
   }
 
   const updatePreviewDebounced = ui.debounce(updatePreview, PREVIEW_DEBOUNCE_MS);
-
-  contentInput.addEventListener("input", function () {
-    ui.autoGrow(contentInput);
-    app.content.text = contentInput.value.trim();
-    updatePreviewDebounced();
-  });
 
   langToggle.addEventListener("click", function () {
     const next = i18n.getLang() === "pt" ? "en" : "pt";

@@ -64,9 +64,28 @@
           <span data-i18n="contentTitle">Content</span>
         </h2>
         <div class="block-body" id="content-body">
-          <label class="field-label" for="content-input" data-i18n="contentLabel">Link or text</label>
-          <textarea class="field textarea" id="content-input" rows="2" spellcheck="false" autocomplete="off" autocapitalize="off" data-i18n-attr="placeholder:contentPlaceholder" aria-describedby="content-hint"></textarea>
-          <p class="field-hint" id="content-hint" data-i18n="contentHint">The QR code updates as you type.</p>
+          <div class="type-picker">
+            <div class="chips" id="type-chips" role="radiogroup" data-i18n-attr="aria-label:contentType"></div>
+            <div class="more">
+              <button type="button" class="chip chip-more" id="more-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="more-menu">
+                <span id="more-label">More</span>
+                <svg class="chevron" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" /></svg>
+              </button>
+              <div class="menu" id="more-menu" role="menu" aria-labelledby="more-btn" hidden></div>
+            </div>
+          </div>
+
+          <div class="quick-panel" id="quick-panel">
+            <label class="field-label" for="content-input" id="quick-label">Link</label>
+            <textarea class="field textarea" id="content-input" rows="2" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="detect-hint quick-error"></textarea>
+            <p class="field-error" id="quick-error" hidden></p>
+            <p class="field-hint detect-hint" id="detect-hint">
+              <span id="detect-text"></span>
+              <button type="button" class="link-btn" id="detect-action" hidden></button>
+            </p>
+          </div>
+
+          <div id="form-panels"></div>
         </div>
       </section>
 
@@ -133,6 +152,9 @@
   <script src="js/state.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/ui.js"></script>
+  <script src="js/payloads.js"></script>
+  <script src="js/detect.js"></script>
+  <script src="js/content.js"></script>
   <script src="js/render.js"></script>
   <script src="js/main.js"></script>
 </body>

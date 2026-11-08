@@ -408,6 +408,249 @@ button {
   color: var(--muted);
 }
 
+.status[data-status="incomplete"] .status-icon::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line-strong);
+}
+
+.status[data-status="invalid"] { color: var(--err); }
+.status[data-status="invalid"] .status-icon::before { content: "!"; }
+
+/* ---------- Type picker ---------- */
+
+.type-picker {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--t-base) var(--ease), border-color var(--t-base) var(--ease);
+}
+
+.chip:hover {
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+}
+
+/* Selected: filled + check mark, not color alone. */
+.chip[aria-checked="true"],
+.chip-more.is-selected {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.chip[aria-checked="true"]::before,
+.chip-more.is-selected::before {
+  content: "✓";
+  font-size: 12px;
+}
+
+.more {
+  position: relative;
+  flex: none;
+}
+
+.chevron {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chip-more[aria-expanded="true"] .chevron {
+  transform: rotate(180deg);
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 15;
+  min-width: 180px;
+  padding: 6px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: var(--target);
+  padding: 0 12px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.menu-item::before {
+  content: "";
+  width: 12px;
+  font-size: 12px;
+}
+
+.menu-item[aria-checked="true"]::before {
+  content: "✓";
+}
+
+.menu-item:hover,
+.menu-item:focus-visible {
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+.menu-item:focus-visible {
+  outline-offset: -2px;
+}
+
+/* ---------- Content forms ---------- */
+
+.detect-hint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+}
+
+.link-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 12px;
+}
+
+.form-field {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+.form-field.is-half {
+  grid-column: span 1;
+}
+
+.form-field.is-disabled .field-label {
+  color: var(--muted);
+}
+
+.field:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.required-mark {
+  color: var(--err);
+}
+
+.field-error {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--err);
+}
+
+.field-error::before {
+  content: "✕ ";
+}
+
+.field[aria-invalid="true"] {
+  border-color: var(--err);
+}
+
+.select {
+  appearance: none;
+  padding-right: 36px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5l3 3 3-3' fill='none' stroke='%23888' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+  cursor: pointer;
+}
+
+.field-with-action {
+  position: relative;
+}
+
+.field-with-action .field {
+  padding-right: 84px;
+}
+
+.field-action {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  min-width: 72px;
+  padding: 0 12px;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.check-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--target);
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.form-hint {
+  margin-top: 14px;
+}
+
 .export-block {
   width: min(100%, 440px);
 }
@@ -523,6 +766,19 @@ button {
   .crop-bl, .crop-br { bottom: 6px; }
   .crop-tl, .crop-bl { left: 6px; }
   .crop-tr, .crop-br { right: 6px; }
+
+  /* Chips scroll horizontally; "More" stays fixed so its menu isn't clipped. */
+  .chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin: -4px 0;
+    padding: 4px 0;
+  }
+
+  .chips::-webkit-scrollbar {
+    display: none;
+  }
 
   /* Export moves to the action bar + bottom sheet on mobile. */
   .export-block {
