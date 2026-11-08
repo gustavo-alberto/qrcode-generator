@@ -2,7 +2,7 @@
  * App bootstrap: theme and language toggles, content input and live preview.
  */
 (function () {
-  const { state, i18n, ui, render, content, payloads, detect, presets, appearance } = window.QRApp;
+  const { state, i18n, ui, render, content, payloads, detect, presets, appearance, validate } = window.QRApp;
 
   const PREVIEW_DEBOUNCE_MS = 150;
   const SAVE_DEBOUNCE_MS = 300;
@@ -77,9 +77,57 @@
     { onChange: function () { updatePreviewDebounced(); } }
   );
 
+  const statusAction = document.getElementById("status-action");
+  let statusActionHandler = null;
+
+  statusAction.addEventListener("click", function () {
+    if (statusActionHandler) statusActionHandler();
+    // The button may disappear after the fix; keep focus nearby.
+    statusText.focus();
+  });
+
+  function formatRatio(ratio) {
+    return ratio.toLocaleString(i18n.getLang() === "pt" ? "pt-BR" : "en", { maximumFractionDigits: 1 });
+  }
+
   function renderStatus() {
-    statusEl.setAttribute("data-status", lastStatus);
-    statusText.textContent = i18n.t(STATUS_KEYS[lastStatus]);
+    let status = lastStatus;
+    let text = i18n.t(STATUS_KEYS[lastStatus]);
+    let action = null;
+
+    // A rendered QR may still be hard to scan because of its colors.
+    if (lastStatus === "ready") {
+      const check = validate.checkScannability(app.appearance);
+      if (check.code === "inverted") {
+        status = "warning";
+        text = i18n.t("warnInverted");
+        action = {
+          label: i18n.t("actionInvert"),
+          run: function () {
+            appearanceBlock.apply({ foreground: app.appearance.background, background: app.appearance.foreground });
+          }
+        };
+      } else if (check.code === "lowContrast") {
+        status = "warning";
+        text = i18n.t("warnLowContrast", { ratio: formatRatio(check.ratio) });
+        action = {
+          label: i18n.t("actionFix"),
+          run: function () {
+            const bg = app.appearance.transparent ? "#ffffff" : app.appearance.background;
+            const fixed = validate.fixContrast(app.appearance.foreground, bg);
+            appearanceBlock.apply(
+              app.appearance.transparent ? { foreground: fixed.foreground } : fixed
+            );
+          }
+        };
+      }
+    }
+
+    statusEl.setAttribute("data-status", status);
+    statusText.textContent = text;
+    statusAction.hidden = !action;
+    statusAction.textContent = action ? action.label : "";
+    statusActionHandler = action ? action.run : null;
 
     const hasQr = preview.getCurrent() !== null;
     qrCanvas.classList.toggle("is-empty", !hasQr);

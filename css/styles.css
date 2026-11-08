@@ -416,6 +416,47 @@ button {
   border: 1.5px solid var(--line-strong);
 }
 
+.status[data-status="warning"] { color: var(--warn); }
+.status[data-status="warning"] .status-icon::before { content: "▲"; font-size: 11px; }
+
+/* Icon column + text column; the action sits under the text. */
+.status {
+  display: grid;
+  grid-template-columns: 16px minmax(0, auto);
+  column-gap: 8px;
+  row-gap: 8px;
+  align-items: start;
+}
+
+.status-icon {
+  margin-top: 3px;
+}
+
+.status-action {
+  grid-column: 2;
+  justify-self: start;
+}
+
+#status-text:focus {
+  outline: none;
+}
+
+.status-action {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.status-action:hover {
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
 .status[data-status="invalid"] { color: var(--err); }
 .status[data-status="invalid"] .status-icon::before { content: "!"; }
 

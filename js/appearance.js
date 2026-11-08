@@ -289,6 +289,8 @@
 
     return {
       refreshThumbnails: refreshThumbnails,
+      /** Applies a partial appearance change (used by status actions). */
+      apply: update,
       getAppearance: function () { return Object.assign({}, appearance); }
     };
   }
