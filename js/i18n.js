@@ -26,7 +26,14 @@
       previewTitle: "Preview",
       comingSoon: "Coming in a later stage.",
       emptyPreviewLabel: "Empty QR code preview",
+      previewLabel: "QR code for: {text}",
       statusEmpty: "Your QR code will appear here",
+      statusReady: "Ready to scan",
+      statusOverflow: "Too much content for a QR code. Shorten it or lower the error correction.",
+      statusError: "Could not generate the QR code.",
+      contentLabel: "Link or text",
+      contentPlaceholder: "Paste a link or type…",
+      contentHint: "The QR code updates as you type.",
       footerLicense: "Open source (MIT)",
       download: "Download",
       copy: "Copy"
@@ -44,7 +51,14 @@
       previewTitle: "Pré-visualização",
       comingSoon: "Disponível em uma próxima etapa.",
       emptyPreviewLabel: "Pré-visualização do QR code vazia",
+      previewLabel: "QR code para: {text}",
       statusEmpty: "Seu QR code aparece aqui",
+      statusReady: "Pronto para escanear",
+      statusOverflow: "Conteúdo grande demais para um QR code. Encurte ou reduza a correção de erro.",
+      statusError: "Não foi possível gerar o QR code.",
+      contentLabel: "Link ou texto",
+      contentPlaceholder: "Cole um link ou digite…",
+      contentHint: "O QR code atualiza enquanto você digita.",
       footerLicense: "Código aberto (MIT)",
       download: "Baixar",
       copy: "Copiar"
@@ -69,12 +83,19 @@
     return current;
   }
 
-  /** Translates a key, falling back to English and then to the key itself. */
-  function t(key) {
+  /**
+   * Translates a key, falling back to English and then to the key itself.
+   * Placeholders like {name} are replaced from `params`.
+   */
+  function t(key, params) {
     const dict = dictionaries[current] || dictionaries.en;
-    if (key in dict) return dict[key];
-    if (key in dictionaries.en) return dictionaries.en[key];
-    return key;
+    let text = key in dict ? dict[key] : key in dictionaries.en ? dictionaries.en[key] : key;
+    if (params) {
+      text = text.replace(/\{(\w+)\}/g, function (match, name) {
+        return name in params ? String(params[name]) : match;
+      });
+    }
+    return text;
   }
 
   function applyI18n(rootEl) {

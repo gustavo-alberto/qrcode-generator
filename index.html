@@ -63,8 +63,10 @@
           <span class="block-index">01</span>
           <span data-i18n="contentTitle">Content</span>
         </h2>
-        <div class="block-body placeholder" id="content-body">
-          <p data-i18n="comingSoon">Coming in a later stage.</p>
+        <div class="block-body" id="content-body">
+          <label class="field-label" for="content-input" data-i18n="contentLabel">Link or text</label>
+          <textarea class="field textarea" id="content-input" rows="2" spellcheck="false" autocomplete="off" autocapitalize="off" data-i18n-attr="placeholder:contentPlaceholder" aria-describedby="content-hint"></textarea>
+          <p class="field-hint" id="content-hint" data-i18n="contentHint">The QR code updates as you type.</p>
         </div>
       </section>
 
@@ -88,7 +90,7 @@
         <span class="crop crop-tr" aria-hidden="true"></span>
         <span class="crop crop-bl" aria-hidden="true"></span>
         <span class="crop crop-br" aria-hidden="true"></span>
-        <div class="qr-canvas is-empty" id="qr-canvas" role="img" data-i18n-attr="aria-label:emptyPreviewLabel">
+        <div class="qr-canvas is-empty" id="qr-canvas" role="img" aria-label="Empty QR code preview">
           <div class="qr-ghost" aria-hidden="true">
             <span class="ghost-finder ghost-tl"></span>
             <span class="ghost-finder ghost-tr"></span>
@@ -97,9 +99,9 @@
         </div>
       </div>
 
-      <p class="status" id="status" aria-live="polite">
-        <span class="status-dot" aria-hidden="true"></span>
-        <span id="status-text" data-i18n="statusEmpty">Your QR code will appear here</span>
+      <p class="status" id="status" data-status="empty" aria-live="polite">
+        <span class="status-icon" aria-hidden="true"></span>
+        <span id="status-text">Your QR code will appear here</span>
       </p>
 
       <section class="block export-block" aria-labelledby="export-title">
@@ -130,6 +132,8 @@
   <script src="vendor/jspdf.umd.min.js"></script>
   <script src="js/state.js"></script>
   <script src="js/i18n.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/render.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

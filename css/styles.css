@@ -305,11 +305,107 @@ button {
   color: var(--muted);
 }
 
-.status-dot {
+.status {
+  max-width: 360px;
+  text-align: left;
+}
+
+/* Status always pairs an icon with text, never color alone. */
+.status-icon {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.status[data-status="empty"] .status-icon::before {
+  content: "";
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: var(--line-strong);
+}
+
+.status[data-status="ready"] { color: var(--ok); }
+.status[data-status="ready"] .status-icon::before { content: "●"; font-size: 10px; }
+
+.status[data-status="overflow"],
+.status[data-status="error"] { color: var(--err); }
+.status[data-status="overflow"] .status-icon::before,
+.status[data-status="error"] .status-icon::before { content: "✕"; }
+
+/* Hide the ghost once a real QR is rendered. */
+.qr-canvas:not(.is-empty) .qr-ghost { display: none; }
+.qr-canvas.is-empty > svg { display: none; }
+
+/* Last valid QR stays visible but dimmed while the content is invalid. */
+.qr-canvas.is-stale > svg {
+  opacity: 0.25;
+  filter: grayscale(1);
+}
+
+.qr-canvas > svg {
+  display: block;
+  animation: qr-in var(--t-fast) var(--ease);
+  transition: opacity var(--t-base) var(--ease);
+}
+
+@keyframes qr-in {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
+}
+
+/* ---------- Form fields ---------- */
+
+.field-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.field {
+  width: 100%;
+  min-height: var(--target);
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line-strong); /* >= 3:1 against the surface */
+  border-radius: var(--radius-sm);
+  transition: border-color var(--t-base) var(--ease);
+}
+
+.field::placeholder {
+  color: var(--muted);
+}
+
+.field:hover {
+  border-color: var(--ink);
+}
+
+.field:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+.textarea {
+  display: block;
+  resize: none;
+  overflow-y: auto;
+  max-height: 240px;
+  line-height: 1.45;
+}
+
+.field-hint {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--muted);
 }
 
 .export-block {
