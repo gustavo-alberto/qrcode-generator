@@ -296,7 +296,11 @@
     async function withBusy(task, failKey) {
       if (busy) return;
       const exportable = options.getExportable();
-      if (!exportable) return;
+      if (!exportable) {
+        // Reached via keyboard shortcut while there is nothing to export.
+        ui.showToast({ message: i18n.t("exportDisabled") });
+        return;
+      }
       busy = true;
       refresh();
       try {

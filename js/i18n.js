@@ -24,7 +24,6 @@
       appearanceTitle: "Appearance",
       exportTitle: "Export",
       previewTitle: "Preview",
-      comingSoon: "Coming in a later stage.",
       emptyPreviewLabel: "Empty QR code preview",
       previewLabel: "QR code for: {text}",
       statusEmpty: "Your QR code will appear here",
@@ -85,6 +84,10 @@
       exportFailed: "Could not export the file. Try again.",
       copyUnsupported: "This browser can't copy images. Download the file instead.",
       copyFailed: "Could not copy the image. Download the file instead.",
+      shortcuts: "Shortcuts:",
+      shortcutDownload: "download",
+      shortcutCopy: "copy image",
+      shortcutPaste: "paste content",
       copied: "Copied",
       downloaded: "Downloaded {name}",
       exportOptions: "Export options",
@@ -177,7 +180,6 @@
       errDate: "Enter a valid date and time.",
       errEndBeforeStart: "The end must be after the start.",
       footerLicense: "Open source (MIT)",
-      download: "Download",
       copy: "Copy"
     },
     pt: {
@@ -191,7 +193,6 @@
       appearanceTitle: "Aparência",
       exportTitle: "Exportar",
       previewTitle: "Pré-visualização",
-      comingSoon: "Disponível em uma próxima etapa.",
       emptyPreviewLabel: "Pré-visualização do QR code vazia",
       previewLabel: "QR code para: {text}",
       statusEmpty: "Seu QR code aparece aqui",
@@ -252,6 +253,10 @@
       exportFailed: "Não foi possível exportar o arquivo. Tente de novo.",
       copyUnsupported: "Este navegador não copia imagens. Baixe o arquivo.",
       copyFailed: "Não foi possível copiar a imagem. Baixe o arquivo.",
+      shortcuts: "Atalhos:",
+      shortcutDownload: "baixar",
+      shortcutCopy: "copiar imagem",
+      shortcutPaste: "colar conteúdo",
       copied: "Copiado",
       downloaded: "{name} baixado",
       exportOptions: "Opções de exportação",
@@ -344,7 +349,6 @@
       errDate: "Digite uma data e hora válidas.",
       errEndBeforeStart: "O fim deve ser depois do início.",
       footerLicense: "Código aberto (MIT)",
-      download: "Baixar",
       copy: "Copiar"
     }
   };

@@ -55,6 +55,7 @@
     langCode.textContent = i18n.getLang().toUpperCase();
     renderThemeToggle(); // its label depends on both theme and language
     renderStatus();
+    renderShortcutsHint();
   }
 
   // ---------- Preview ----------
@@ -227,8 +228,96 @@
     renderLanguage();
   });
 
+  // ---------- Keyboard shortcuts ----------
+
+  const isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+  const shortcutsHint = document.getElementById("shortcuts-hint");
+
+  function isEditable(el) {
+    return Boolean(el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)));
+  }
+
+  function renderShortcutsHint() {
+    const mod = isMac ? "⌘" : "Ctrl";
+    const items = [
+      [mod + "+S", i18n.t("shortcutDownload")],
+      [mod + "+Shift+C", i18n.t("shortcutCopy")],
+      [mod + "+V", i18n.t("shortcutPaste")]
+    ];
+    shortcutsHint.textContent = "";
+    shortcutsHint.append(i18n.t("shortcuts") + " ");
+    items.forEach(function (item, i) {
+      const kbd = document.createElement("kbd");
+      kbd.textContent = item[0];
+      shortcutsHint.append(kbd, " " + item[1] + (i < items.length - 1 ? " · " : ""));
+    });
+  }
+
+  document.addEventListener("keydown", function (event) {
+    const mod = isMac ? event.metaKey : event.ctrlKey;
+    if (!mod || event.altKey) return;
+    const key = event.key.toLowerCase();
+
+    if (key === "s" && !event.shiftKey) {
+      // Always take over Ctrl+S: the browser's "save page" is never wanted here.
+      event.preventDefault();
+      exportPanel.download();
+    } else if (key === "c" && event.shiftKey) {
+      event.preventDefault();
+      exportPanel.copy();
+    }
+  });
+
+  // Pasting anywhere outside a field fills the link/text field.
+  document.addEventListener("paste", function (event) {
+    if (isEditable(event.target) || document.querySelector("dialog[open]")) return;
+    const text = event.clipboardData ? event.clipboardData.getData("text") : "";
+    if (!text) return;
+    event.preventDefault();
+    contentBlock.pasteIntoQuick(text);
+  });
+
+  // ---------- Mobile: compact sticky preview ----------
+  // On phones the preview is fixed under the header. It shrinks once the
+  // page scrolls so the form gets more room. Being fixed (out of flow), the
+  // shrink causes no layout shift; the workspace reserves its full height.
+
+  const stageEl = document.querySelector(".stage");
+  const mobile = window.matchMedia("(max-width: 767px)");
+  const COMPACT_AFTER_PX = 40;
+
+  function measureStage() {
+    if (!mobile.matches) {
+      root.style.removeProperty("--stage-full-h");
+      root.style.removeProperty("--sticky-top");
+      return;
+    }
+    const height = stageEl.offsetHeight;
+    if (!stageEl.classList.contains("is-compact")) root.style.setProperty("--stage-full-h", height + "px");
+    // Keeps focused fields from scrolling under the fixed preview (WCAG 2.4.11).
+    root.style.setProperty("--sticky-top", stageEl.getBoundingClientRect().bottom + 8 + "px");
+  }
+
+  let scrollFrame = 0;
+  function onScroll() {
+    if (scrollFrame) return;
+    scrollFrame = requestAnimationFrame(function () {
+      scrollFrame = 0;
+      stageEl.classList.toggle("is-compact", mobile.matches && window.scrollY > COMPACT_AFTER_PX);
+    });
+  }
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  mobile.addEventListener("change", function () {
+    stageEl.classList.remove("is-compact");
+    measureStage();
+    onScroll();
+  });
+  if (typeof ResizeObserver === "function") new ResizeObserver(measureStage).observe(stageEl);
+
   // ---------- Init ----------
 
   i18n.setLang(i18n.resolveLang(prefs.lang, navigator.language));
   renderLanguage();
+  measureStage();
 })();

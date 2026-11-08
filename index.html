@@ -31,10 +31,10 @@
         <rect x="3" y="9" width="4" height="4" class="brand-mark-cut" />
         <rect x="10" y="10" width="2" height="2" class="brand-mark-accent" />
       </svg>
-      <span class="brand-name">qrcode</span>
+      <h1 class="brand-name">qrcode<span class="visually-hidden"> · QR Code Generator</span></h1>
     </div>
 
-    <nav class="header-actions" data-i18n-attr="aria-label:headerActions">
+    <div class="header-actions" role="group" data-i18n-attr="aria-label:headerActions">
       <button type="button" class="icon-btn" id="theme-toggle" data-i18n-attr="aria-label:toggleTheme;title:toggleTheme">
         <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="12" cy="12" r="4" />
@@ -52,12 +52,12 @@
           <path d="M8 6l-6 6 6 6M16 6l6 6-6 6" />
         </svg>
       </a>
-    </nav>
+    </div>
   </header>
 
   <main class="workspace">
     <!-- Left column: what the user edits. -->
-    <div class="compose" id="compose">
+    <div class="compose" id="compose" tabindex="-1">
       <section class="block" aria-labelledby="content-title">
         <h2 class="block-title" id="content-title">
           <span class="block-index">01</span>
@@ -180,7 +180,12 @@
             </div>
           </details>
 
-          <div class="block-footer">
+          <!-- Undo sits next to Reset (not in a timed toast) so it's easy to reach by keyboard. -->
+          <div class="block-footer" role="status">
+            <p class="reset-done" id="reset-done" hidden>
+              <span data-i18n="resetDone">Appearance reset.</span>
+              <button type="button" class="link-btn" id="reset-undo" data-i18n="undo">Undo</button>
+            </p>
             <button type="button" class="link-btn" id="reset-btn" data-i18n="reset">Reset</button>
           </div>
         </div>
@@ -250,10 +255,11 @@
             </div>
 
             <div class="export-actions">
-              <button type="button" class="btn btn-primary" id="download-btn" disabled>Download</button>
-              <button type="button" class="btn btn-secondary" id="copy-btn" disabled data-i18n="copy">Copy</button>
+              <button type="button" class="btn btn-primary" id="download-btn" disabled aria-keyshortcuts="Control+S Meta+S">Download</button>
+              <button type="button" class="btn btn-secondary" id="copy-btn" disabled data-i18n="copy" aria-keyshortcuts="Control+Shift+C Meta+Shift+C">Copy</button>
             </div>
             <p class="field-hint" id="export-reason" hidden></p>
+            <p class="field-hint shortcuts-hint" id="shortcuts-hint"></p>
             <p class="visually-hidden" id="export-live" aria-live="polite"></p>
           </div>
         </div>

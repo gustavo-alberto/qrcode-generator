@@ -629,7 +629,15 @@
     renderPicker();
     renderPanels();
 
-    return { getResult, getSummary, getNameHint, getType };
+    /** Puts pasted text in the quick field (switching to it if needed). */
+    function pasteIntoQuick(text) {
+      if (QUICK_TYPES.indexOf(state.type) === -1) selectType("link", { fromUser: false });
+      quickInput.value = text;
+      quickInput.dispatchEvent(new Event("input"));
+      quickInput.focus();
+    }
+
+    return { getResult, getSummary, getNameHint, getType, pasteIntoQuick };
   }
 
   return { create, PRIMARY_TYPES, MORE_TYPES, FORMS };

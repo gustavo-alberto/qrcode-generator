@@ -313,18 +313,39 @@
 
     // ---------- Reset ----------
 
+    const resetDone = rootEl.querySelector("#reset-done");
+    const resetUndo = rootEl.querySelector("#reset-undo");
+    const UNDO_VISIBLE_MS = 15000;
+    let undoSnapshot = null;
+    let undoTimer = null;
+
+    function hideUndo() {
+      clearTimeout(undoTimer);
+      undoSnapshot = null;
+      resetDone.hidden = true;
+    }
+
     resetBtn.addEventListener("click", function () {
       const previous = Object.assign({}, appearance);
       // Reset style, but keep max error correction while a logo is present.
       update(Object.assign({}, presets.DEFAULT_APPEARANCE, logo ? { errorCorrection: "H" } : {}));
-      ui.showToast({
-        message: i18n.t("resetDone"),
-        actionLabel: i18n.t("undo"),
-        onAction: function () {
-          update(previous);
-          resetBtn.focus();
-        }
-      });
+      undoSnapshot = previous;
+      resetDone.hidden = false;
+      // The reset button is now disabled; move focus to Undo, next to it.
+      resetUndo.focus();
+      clearTimeout(undoTimer);
+      undoTimer = setTimeout(function hideWhenIdle() {
+        // Never pull the control away while the user is on it.
+        if (resetDone.contains(document.activeElement)) undoTimer = setTimeout(hideWhenIdle, 3000);
+        else hideUndo();
+      }, UNDO_VISIBLE_MS);
+    });
+
+    resetUndo.addEventListener("click", function () {
+      const snapshot = undoSnapshot;
+      hideUndo();
+      if (snapshot) update(snapshot);
+      resetBtn.focus();
     });
 
     // ---------- State ----------
@@ -342,6 +363,12 @@
     }
 
     function update(patch) {
+      // Any further change makes the pending undo stale.
+      if (undoSnapshot) {
+        const hadFocus = document.activeElement === resetUndo;
+        hideUndo();
+        if (hadFocus) resetBtn.focus();
+      }
       appearance = presets.sanitizeAppearance(Object.assign({}, appearance, patch));
       syncControls();
       renderCustomThumb();
