@@ -1,0 +1,92 @@
+/* Design tokens. Light theme is the default; dark theme applies either
+   from the system preference or from an explicit data-theme attribute. */
+
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("../fonts/space-grotesk-latin-wght-normal.woff2") format("woff2");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("../fonts/jetbrains-mono-latin-wght-normal.woff2") format("woff2");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --paper: #f4f2ec;
+  --surface: #fbfaf7;
+  --card: #ffffff;
+  --ink: #17171a;
+  --muted: #5f5f67;
+  --line: #d9d6cc;
+  --line-strong: #8a877d;
+  --accent: #c4400f;       /* 5:1 against white text */
+  --accent-ink: #ffffff;
+  --accent-hover: #a33508;
+  --ok: #1d7f4a;
+  --warn: #a86400;
+  --err: #b3261e;
+  --dot-grid: rgba(23, 23, 26, 0.09);
+  --shadow: 0 1px 2px rgba(23, 23, 26, 0.06), 0 8px 24px rgba(23, 23, 26, 0.08);
+
+  --font-ui: "Space Grotesk", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --gap: 24px;
+  --header-h: 60px;
+  --action-bar-h: 72px;
+  --target: 44px;
+
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --t-fast: 120ms;
+  --t-base: 150ms;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #131315;
+    --surface: #1a1a1d;
+    --card: #ffffff;
+    --ink: #ebebea;
+    --muted: #a0a0a8;
+    --line: #2c2c31;
+    --line-strong: #6e6e76;
+    --accent: #ff6a35;
+    --accent-ink: #131315;
+    --accent-hover: #ff8a5f;
+    --ok: #4cc283;
+    --warn: #e6a23c;
+    --err: #f2766e;
+    --dot-grid: rgba(235, 235, 234, 0.06);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #131315;
+  --surface: #1a1a1d;
+  --card: #ffffff;
+  --ink: #ebebea;
+  --muted: #a0a0a8;
+  --line: #2c2c31;
+  --line-strong: #6e6e76;
+  --accent: #ff6a35;
+  --accent-ink: #131315;
+  --accent-hover: #ff8a5f;
+  --ok: #4cc283;
+  --warn: #e6a23c;
+  --err: #f2766e;
+  --dot-grid: rgba(235, 235, 234, 0.06);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
