@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="is-loading">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,9 +15,24 @@
         document.documentElement.setAttribute("data-theme", saved.theme);
       }
     } catch (e) { /* storage unavailable: fall back to system theme */ }
+
+    // Preload fonts so text doesn't reflow when they swap in. Skipped on
+    // file://, where CORS-mode preloads are blocked (fonts still load via CSS).
+    if (location.protocol !== "file:") {
+      ["space-grotesk", "jetbrains-mono"].forEach(function (name) {
+        var link = document.createElement("link");
+        link.rel = "preload";
+        link.as = "font";
+        link.type = "font/woff2";
+        link.crossOrigin = "anonymous";
+        link.href = "fonts/" + name + "-latin-wght-normal.woff2";
+        document.head.appendChild(link);
+      });
+    }
   </script>
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/styles.css">
+  <noscript><style>.is-loading .workspace, .is-loading .app-footer { visibility: visible; }</style></noscript>
 </head>
 <body>
   <a class="skip-link" href="#compose" data-i18n="skipToContent">Skip to content</a>
@@ -302,19 +317,18 @@
     <button type="button" class="toast-action"></button>
   </div>
 
-  <script src="vendor/qr-code-styling.js"></script>
-  <script src="vendor/jspdf.umd.min.js"></script>
-  <script src="js/state.js"></script>
-  <script src="js/i18n.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/payloads.js"></script>
-  <script src="js/detect.js"></script>
-  <script src="js/content.js"></script>
-  <script src="js/presets.js"></script>
-  <script src="js/validate.js"></script>
-  <script src="js/render.js"></script>
-  <script src="js/appearance.js"></script>
-  <script src="js/export.js"></script>
-  <script src="js/main.js"></script>
+  <script src="vendor/qr-code-styling.js" defer></script>
+  <script src="js/state.js" defer></script>
+  <script src="js/i18n.js" defer></script>
+  <script src="js/ui.js" defer></script>
+  <script src="js/payloads.js" defer></script>
+  <script src="js/detect.js" defer></script>
+  <script src="js/content.js" defer></script>
+  <script src="js/presets.js" defer></script>
+  <script src="js/validate.js" defer></script>
+  <script src="js/render.js" defer></script>
+  <script src="js/appearance.js" defer></script>
+  <script src="js/export.js" defer></script>
+  <script src="js/main.js" defer></script>
 </body>
 </html>

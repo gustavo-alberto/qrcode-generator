@@ -90,9 +90,35 @@
     });
   }
 
+  const JSPDF_SRC = "vendor/jspdf.umd.min.js";
+  let jsPdfPromise = null;
+
+  /**
+   * Loads the bundled jsPDF (~420 KB) on first PDF export only, keeping it
+   * off the critical path. A plain <script> works over file:// too.
+   */
+  function loadJsPDF() {
+    if (typeof window !== "undefined" && window.jspdf && window.jspdf.jsPDF) {
+      return Promise.resolve(window.jspdf.jsPDF);
+    }
+    if (!jsPdfPromise) {
+      jsPdfPromise = new Promise(function (resolve, reject) {
+        const script = document.createElement("script");
+        script.src = JSPDF_SRC;
+        script.onload = function () { resolve(window.jspdf.jsPDF); };
+        script.onerror = function () {
+          jsPdfPromise = null; // allow a retry
+          reject(new Error("Could not load " + JSPDF_SRC));
+        };
+        document.head.appendChild(script);
+      });
+    }
+    return jsPdfPromise;
+  }
+
   /**
    * Generates the file as a Blob.
-   * deps: { QRCodeStyling, jsPDF, render }
+   * deps: { QRCodeStyling, render, jsPDF? } — jsPDF is loaded on demand when omitted.
    */
   async function generate(deps, payload, appearance, prefs) {
     const createQr = deps.render.createQr;
@@ -111,7 +137,8 @@
       const px = pdfPixels(prefs.pdfSize);
       const png = await createQr(deps.QRCodeStyling, payload, appearance, px, "canvas").getRawData("png");
       const layout = pdfLayout(prefs.pdfSize, prefs.pdfPage);
-      const doc = new deps.jsPDF({ unit: "mm", format: layout.format, compress: true });
+      const JsPDF = deps.jsPDF || (await loadJsPDF());
+      const doc = new JsPDF({ unit: "mm", format: layout.format, compress: true });
       doc.addImage(await blobToDataUrl(png), "PNG", layout.x, layout.y, layout.size, layout.size);
       return doc.output("blob");
     }
@@ -153,7 +180,7 @@
 
   /**
    * Mounts the export panel.
-   * deps: { i18n, ui, render, QRCodeStyling, jsPDF }
+   * deps: { i18n, ui, render, QRCodeStyling }
    * options: { prefs, getExportable() -> { payload, appearance, nameHint } | null, onPrefsChange(prefs) }
    */
   function createPanel(deps, options) {

@@ -7,6 +7,13 @@
   box-sizing: border-box;
 }
 
+/* Scripts build chips, presets and export controls. Keep the workspace
+   invisible (but laid out) until they finish, so nothing shifts on screen. */
+.is-loading .workspace,
+.is-loading .app-footer {
+  visibility: hidden;
+}
+
 /* `hidden` must win over any component display rule. */
 [hidden] {
   display: none !important;

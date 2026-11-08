@@ -203,7 +203,7 @@
   // ---------- Export ----------
 
   exportPanel = exporter.createPanel(
-    { i18n: i18n, ui: ui, render: render, QRCodeStyling: window.QRCodeStyling, jsPDF: window.jspdf.jsPDF },
+    { i18n: i18n, ui: ui, render: render, QRCodeStyling: window.QRCodeStyling },
     {
       prefs: prefs.export,
       // Export only what the preview shows as ready (warnings included).
@@ -320,4 +320,6 @@
   i18n.setLang(i18n.resolveLang(prefs.lang, navigator.language));
   renderLanguage();
   measureStage();
+  // Everything is built and measured: reveal the workspace (see styles.css).
+  root.classList.remove("is-loading");
 })();
