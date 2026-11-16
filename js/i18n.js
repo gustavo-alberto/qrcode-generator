@@ -180,6 +180,8 @@
       errDate: "Enter a valid date and time.",
       errEndBeforeStart: "The end must be after the start.",
       footerLicense: "Open source (MIT)",
+      footerLinkedin: "LinkedIn profile (opens in a new tab)",
+      footerGithub: "GitHub profile (opens in a new tab)",
       copy: "Copy"
     },
     pt: {
@@ -349,6 +351,8 @@
       errDate: "Digite uma data e hora válidas.",
       errEndBeforeStart: "O fim deve ser depois do início.",
       footerLicense: "Código aberto (MIT)",
+      footerLinkedin: "Perfil no LinkedIn (abre em nova aba)",
+      footerGithub: "Perfil no GitHub (abre em nova aba)",
       copy: "Copiar"
     }
   };
